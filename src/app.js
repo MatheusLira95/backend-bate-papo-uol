@@ -21,6 +21,9 @@ app.post("/participants", (req, res) => {
   participants.push(participant);
   res.send(participants);
 });
+app.get("/participants", (req, res) => {
+  res.send(participants);
+});
 app.listen(4000, () => {
   console.log("Server running");
 });
