@@ -71,6 +71,18 @@ app.get("/messages", (req, res) => {
 
   res.send(messagesSent);
 });
+
+app.post("/status", (req, res) => {
+  const userStillOn = participants.find((p) => p.name === req.headers.user);
+  if (userStillOn) {
+    userStillOn.lastStatus = Date.now();
+    res.status(200);
+  } else {
+    res.status(400);
+  }
+
+  res.send(req.headers.user);
+});
 app.listen(4000, () => {
   console.log("Server running");
 });
