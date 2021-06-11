@@ -20,6 +20,14 @@ app.post("/participants", (req, res) => {
   }
   participant.lastStatus = Date.now();
   participants.push(participant);
+  const loginMessage = {
+    from: participant.name,
+    to: "Todos",
+    text: "entrou na sala",
+    type: "status",
+    time: dayjs().format("HH:mm:ss"),
+  };
+  messages.push(loginMessage);
   res.send(participants);
 });
 
@@ -49,13 +57,15 @@ app.get("/messages", (req, res) => {
   const messagesLimit = parseInt(req.query.limit);
   const messagesSent = [];
   const messagesFiltered = messages.filter(
-    (m) => m.to === "Todos" || m.to === req.headers.user
+    (m) =>
+      m.to === "Todos" ||
+      m.to === req.headers.user ||
+      m.from === req.headers.user
   );
 
   for (let i = 0; i < messagesLimit; i++) {
     if (messagesFiltered[i] !== undefined) {
-      const convertedMessage = JSON.stringify(messages[i]);
-      messagesSent.push(convertedMessage);
+      messagesSent.push(messagesFiltered[i]);
     }
   }
 
