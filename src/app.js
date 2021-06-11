@@ -6,8 +6,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const participants = [];
+let participants = [];
 const messages = [];
+
+setInterval(() => {
+  participants.forEach((p) => {
+    if (Date.now() - p.lastStatus > 10000) {
+      let leaveMessage = {
+        from: p.name,
+        to: "Todos",
+        text: "saiu da sala...",
+        type: "status",
+        time: dayjs().format("HH:mm:ss"),
+      };
+      messages.push(leaveMessage);
+    }
+  });
+  participants = participants.filter(
+    (p) => Date.now() - p.lastStatus > 10000,
+    15000
+  );
+}, 15000);
 
 app.post("/participants", (req, res) => {
   const participant = req.body;
@@ -77,6 +96,7 @@ app.post("/status", (req, res) => {
   if (userStillOn) {
     userStillOn.lastStatus = Date.now();
     res.status(200);
+    res.send(userStillOn);
   } else {
     res.status(400);
   }
