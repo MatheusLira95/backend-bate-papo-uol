@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import cors from "cors";
 import dayjs from "dayjs";
 
@@ -42,7 +42,24 @@ app.post("/messages", (req, res) => {
     }
   }
   messages.push(message);
-  res.status(200).send(message);
+  res.status(200).send(req.body);
+});
+
+app.get("/messages", (req, res) => {
+  const messagesLimit = parseInt(req.query.limit);
+  const messagesSent = [];
+  const messagesFiltered = messages.filter(
+    (m) => m.to === "Todos" || m.to === req.headers.user
+  );
+
+  for (let i = 0; i < messagesLimit; i++) {
+    if (messagesFiltered[i] !== undefined) {
+      const convertedMessage = JSON.stringify(messages[i]);
+      messagesSent.push(convertedMessage);
+    }
+  }
+
+  res.send(messagesSent);
 });
 app.listen(4000, () => {
   console.log("Server running");
